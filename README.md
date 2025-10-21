@@ -1,4 +1,4 @@
-# predict_from_file.py — Quick Start
+# MRIQC predict
 
 This script loads **best saved models** (one per modality) and applies them to a **MRIQC output file** to produce prediction files (per-modality and a combined file).
 
