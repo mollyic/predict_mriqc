@@ -24,6 +24,22 @@ drop_cols = [
     'spacing_x', 'spacing_y', 'spacing_z',
     'size_x', 'size_y', 'size_z']
 
+ratings_dict = {
+    "quality": {
+        0: "Very poor",
+        1: "Suboptimal",
+        2: "Acceptable",
+        3: "Above average",
+        4: "Excellent"
+    },
+    "motion": {
+        0: "Severe",
+        1: "Moderate",
+        2: "Mild",
+        3: "None"
+        }
+}
+
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument(
@@ -34,7 +50,7 @@ def parse_args():
         help="Path to the input CSV to score."
         )
     p.add_argument(
-        "--dv", 
+        "-dv", 
         required=True, 
         choices=["motion", "quality"], 
         help="Dependent variable to test: `motion` or `quality`"
@@ -46,7 +62,7 @@ def parse_args():
         help="Classifier choice: `binary` or `multiclass`."
         )
     p.add_argument(
-        "--out_dir", 
+        "--out_dir", "-o",
         default='predictions/', 
         help="Directory to write predictions."
         )
@@ -80,7 +96,6 @@ def main():
     for mod, n in counts.items():
         pct = 100 * n / total
         print(f"{str(mod):>10} | {n:>4} ({pct:5.1f}%) ")
-
     print("\n[NOTE] Modality is derived from bids_name column suffix (e.g. '_T1w'). If your filenames do not follow this convention, please manually add a `modality` column.")
 
     winners = pd.read_csv(models_csv)
@@ -88,9 +103,14 @@ def main():
     if winners.empty:
         raise ValueError(f"No rows in {models_csv} for dv='{args.dv}' and classifier='{args.classifier}'.")
 
-    preds_all = []
-    print("\n=====================================================\n Generating predictions...")
 
+    preds_all = []
+
+    if args.classifier == 'multiclass':
+        ratings_labels = ratings_dict[args.dv]
+    else: 
+        ratings_labels = {0: "Unacceptable", 1: "Acceptable"},
+    print("\n=====================================================\n Generating predictions...")
     for modality, df_mod in df_all.groupby("modality"):
        
         match = winners[winners["modality"] == modality]
@@ -132,22 +152,24 @@ def main():
             else:
                 for i in range(y_proba.shape[1]):
                     proba_cols[f"proba_col_{i}"] = y_proba[:, i]
-
         # predictions df
         preds_df = pd.DataFrame({
             "modality": modality,
             "classifier": args.classifier,
             "dv": args.dv,
-            "y_pred": y_pred if model_type != 'CatBoostOrdinal' else y_pred.ravel(), 
-            #"model_type": model_type,
-            #"model_name": model_path,
+            "rating": y_pred if model_type != 'CatBoostOrdinal' else y_pred.ravel(), 
         }, index=X.index).assign(**proba_cols)
 
+        preds_df["rating_label"] = preds_df["rating"].map(ratings_labels)
         preds_df = pd.concat(
             [df_mod[['bids_name']].reset_index(drop=True),
             preds_df.reset_index(drop=True)],
             axis=1
         )
+
+        order = ['bids_name', 'modality', 'classifier', 'dv', 'rating', 'rating_label']
+        rest = [c for c in preds_df.columns if c not in order]
+        preds_df = preds_df[order + rest]
 
         if f'avg_{args.dv}' in df_mod.columns:
             preds_df = pd.concat(

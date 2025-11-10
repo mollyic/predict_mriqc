@@ -1,54 +1,47 @@
 # MRIQC predict
 
-This script loads **best saved models** (one per modality) and applies them to a **MRIQC output file** to produce prediction files (per-modality and a combined file).
+This script predicts scan quality and motion for T1w, T2w and FLAIR scans. Models were trained on **MRIQC data** and scans were **rated by trained neuroradiologists**. It requires **MRIQC output files** to produce prediction files (per-modality and a combined file). For each `modality` present in your input MRIQC file the script loads the corresponding model and writes an output CSV with predictions and probabilities
+
 
 ## Requirements
 
 * Python 3.9+
 * `pandas`, `joblib`
-* Your **input CSV** must contain a `modality` column (used to match the correct model per modality).
 
 ## Inputs
 
-* `--input_csv`
+* `--input_csv / -i`
   Path to the new data you want to score.
 
-* `--dv`
+* `-dv`
   Dependent variable tag used when selecting models (`motion` or `quality`).
 
-* `--classifier`
+* `--classifier / -c`
   Model family (`binary` or `multiclass`).
 
-* `--out_dir` *(optional)*
+* `--out_dir / -o` *(optional)*
   Folder to write predictions. Defaults to `predictions/`.
 
 ## Usage
 
 ```bash
 python predict.py \
-  --input_csv /path/to/new_data.csv \
-  --dv motion \
-  --classifier multiclass \
-  --out_dir output/predictions_new
+  -i /path/to/new_data.csv \
+  -dv motion \
+  -c multiclass 
 ```
-
-## What it does
-
-1. Gets best predictive model from `input/best_models.csv`, filters to rows matching `--dv` and `--classifier`.
-2. For each `modality` present in your input CSV:
-   * Loads the corresponding model .
-   * Writes a per-modality CSV with predictions and probabilities.
 
 ## Outputs
 
 * Per-modality files:
-  `preds_<MODALITY>_dv-<dv>_cls-<classifier>.csv`
+  `predictions_<MODALITY>_dv-<dv>_cls-<classifier>_infile<you_input_csv_name>.csv`
 * Combined file:
-  `preds_ALL_dv-<dv>_cls-<classifier>.csv`
+  `predictions_dv-<dv>_cls-<classifier>_infile<you_input_csv_name>.csv`
 
-Each file includes:
-
-* `modality`, `classifier`, `dv`
-* `y_pred` (predicted class/label)
-* Probability columns (e.g., `proba_class_0`, `proba_class_1`) when supported
-* `model_type`, `model_file`
+## Results 
+Output csv contain numerical and qualitative rating columns: 
+* `rating`: predicted class/label (1 = positive class, 0 = negative class)
+* `rating_label`: a qualitative rating label derived from `rating` consistent with the labels applied by neuroradiologists during trainig 
+    * *Motion:*  Severe, Moderate, Mild, None
+    * *Quality: * Very poor, Suboptimal, Acceptable, Above average, Excellent
+* Probability columns for each possible class (e.g., `proba_class_0`, `proba_class_1`) when supported
