@@ -1,0 +1,13 @@
+modality,classifier,dv,dv_key,model_name,model
+FLAIR,binary,quality,avg_quality,FLAIR_dv-quality_model-CatBoostOrdinal_pca-False_npca-0_cvouter-10_cvinner-5_seed-42_classifier-binary_cvmetric-roc_auc.joblib,CatBoostOrdinal
+T1w,binary,quality,avg_quality,T1w_dv-quality_model-LogisticRegression_pca-False_npca-0_cvouter-10_cvinner-5_seed-42_classifier-binary_cvmetric-roc_auc.joblib,LogisticRegression
+T2w,binary,quality,avg_quality,T2w_dv-quality_model-RandomForest_pca-False_npca-30_cvouter-10_cvinner-5_seed-42_classifier-binary_cvmetric-roc_auc.joblib,RandomForest
+FLAIR,multiclass,quality,avg_quality,FLAIR_dv-quality_model-XGBoostOrdinal_pca-False_npca-0_cvouter-10_cvinner-5_seed-42_classifier-multiclass_cvmetric-roc_auc_ovr.joblib,XGBoostOrdinal
+T1w,multiclass,quality,avg_quality,T1w_dv-quality_model-OrdinalLogistic_pca-False_npca-25_cvouter-10_cvinner-5_seed-42_classifier-multiclass_cvmetric-roc_auc_ovr.joblib,OrdinalLogistic
+T2w,multiclass,quality,avg_quality,T2w_dv-quality_model-CatBoostOrdinal_pca-False_npca-0_cvouter-10_cvinner-5_seed-42_classifier-multiclass_cvmetric-roc_auc_ovr.joblib,CatBoostOrdinal
+T2w,binary,motion,avg_motion,T2w_dv-motion_model-CatBoostOrdinal_pca-False_npca-30_cvouter-10_cvinner-5_seed-42_classifier-binary_cvmetric-roc_auc.joblib,CatBoostOrdinal
+T1w,binary,motion,avg_motion,T1w_dv-motion_model-RandomForest_pca-False_npca-0_cvouter-10_cvinner-5_seed-42_classifier-binary_cvmetric-roc_auc.joblib,RandomForest
+FLAIR,binary,motion,avg_motion,FLAIR_dv-motion_model-CatBoostOrdinal_pca-False_npca-0_cvouter-10_cvinner-5_seed-42_classifier-binary_cvmetric-roc_auc.joblib,CatBoostOrdinal
+T1w,multiclass,motion,avg_motion,T1w_dv-motion_model-CatBoostOrdinal_pca-False_npca-0_cvouter-10_cvinner-5_seed-42_classifier-multiclass_cvmetric-roc_auc_ovr.joblib,CatBoostOrdinal
+T2w,multiclass,motion,avg_motion,T2w_dv-motion_model-RandomForest_pca-False_npca-30_cvouter-10_cvinner-5_seed-42_classifier-multiclass_cvmetric-roc_auc_ovr.joblib,RandomForest
+FLAIR,multiclass,motion,avg_motion,FLAIR_dv-motion_model-CatBoostOrdinal_pca-False_npca-0_cvouter-10_cvinner-5_seed-42_classifier-multiclass_cvmetric-roc_auc_ovr.joblib,CatBoostOrdinal
